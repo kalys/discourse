@@ -148,11 +148,11 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    I18n.locale = if current_user
-                    current_user.effective_locale
-                  else
-                    SiteSetting.default_locale
-                  end
+    if params[:setlocale] && /[a-z]{2}/ =~ params[:setlocale]
+      session[:locale] = params[:setlocale]
+    end
+
+    I18n.locale = session[:locale] || (current_user && current_user.effective_locale) || SiteSetting.default_locale || 'en'
   end
 
   def store_preloaded(key, json)
